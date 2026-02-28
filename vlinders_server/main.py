@@ -7,9 +7,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .config import config
 from .utils import logger
-from .inference import vllm_service
-from .api.internal import router as internal_router
 from .api.health import router as health_router
+
+# 注意: vLLM 推理服务需要在安装完依赖后启用
+# from .inference import vllm_service
+# from .api.internal import router as internal_router
 
 
 @asynccontextmanager
@@ -22,14 +24,14 @@ async def lifespan(app: FastAPI):
     # 加载模型配置
     config.load_models_config()
 
-    # 加载模型
-    for model_name, model_config in config.models.items():
-        try:
-            await vllm_service.load_model(model_name, model_config)
-        except Exception as e:
-            logger.error(f"Failed to load model {model_name}: {e}")
+    # TODO: 在 vLLM 安装完成后启用模型加载
+    # for model_name, model_config in config.models.items():
+    #     try:
+    #         await vllm_service.load_model(model_name, model_config)
+    #     except Exception as e:
+    #         logger.error(f"Failed to load model {model_name}: {e}")
 
-    logger.info("✅ Vlinders-Server started successfully")
+    logger.info("Vlinders-Server started successfully (vLLM disabled)")
 
     yield
 
@@ -55,7 +57,8 @@ app.add_middleware(
 )
 
 # 注册路由
-app.include_router(internal_router, prefix="/internal", tags=["Internal"])
+# TODO: 在 vLLM 安装完成后启用内部 API
+# app.include_router(internal_router, prefix="/internal", tags=["Internal"])
 app.include_router(health_router, tags=["Health"])
 
 

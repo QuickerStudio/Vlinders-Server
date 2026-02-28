@@ -1,12 +1,13 @@
 """
 健康检查端点
 """
-import torch
 from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import List, Dict, Any
 
-from ..inference import vllm_service
+# TODO: 在 vLLM 和 torch 安装完成后启用
+# import torch
+# from ..inference import vllm_service
 
 
 router = APIRouter()
@@ -30,29 +31,13 @@ async def health_check() -> HealthResponse:
     返回服务状态、已加载模型、GPU 信息等
     """
 
-    # 获取 GPU 信息
-    gpu_available = torch.cuda.is_available()
-    gpu_count = torch.cuda.device_count() if gpu_available else 0
-
+    # TODO: 在 torch 安装完成后启用 GPU 检测
+    gpu_available = False
+    gpu_count = 0
     gpu_info = []
-    if gpu_available:
-        for i in range(gpu_count):
-            props = torch.cuda.get_device_properties(i)
-            allocated = torch.cuda.memory_allocated(i) / 1024**3  # GB
-            reserved = torch.cuda.memory_reserved(i) / 1024**3  # GB
-            total = props.total_memory / 1024**3  # GB
 
-            gpu_info.append({
-                "id": i,
-                "name": props.name,
-                "memory_allocated_gb": round(allocated, 2),
-                "memory_reserved_gb": round(reserved, 2),
-                "memory_total_gb": round(total, 2),
-                "utilization": round((reserved / total) * 100, 2)
-            })
-
-    # 获取模型信息
-    models_loaded = vllm_service.list_models()
+    # TODO: 在 vLLM 安装完成后启用模型检测
+    models_loaded = []
 
     return HealthResponse(
         status="healthy",
@@ -72,10 +57,11 @@ async def readiness_check():
     用于 Kubernetes 就绪探针
     """
 
-    models = vllm_service.list_models()
+    # TODO: 在 vLLM 安装完成后启用模型检测
+    models = []
 
     if not models:
-        return {"ready": False, "reason": "No models loaded"}
+        return {"ready": False, "reason": "No models loaded (vLLM not installed)"}
 
     return {"ready": True, "models": models}
 

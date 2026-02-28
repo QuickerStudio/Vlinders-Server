@@ -22,28 +22,26 @@ class ModelConfig(BaseSettings):
 
 class ServerConfig(BaseSettings):
     """服务器配置"""
+    model_config = {"extra": "ignore"}
+
     # 服务配置
-    host: str = Field(default="0.0.0.0", env="SERVER_HOST")
-    port: int = Field(default=8000, env="SERVER_PORT")
-    workers: int = Field(default=1, env="SERVER_WORKERS")
+    host: str = Field(default="0.0.0.0", alias="SERVER_HOST")
+    port: int = Field(default=8000, alias="SERVER_PORT")
+    workers: int = Field(default=1, alias="SERVER_WORKERS")
 
     # 内部认证
-    internal_secret: str = Field(default="", env="INTERNAL_SECRET")
+    internal_secret: str = Field(default="", alias="INTERNAL_SECRET")
 
     # 数据库配置
-    redis_url: str = Field(default="redis://localhost:6379", env="REDIS_URL")
-    postgres_url: str = Field(default="postgresql://localhost:5432/vlinders", env="POSTGRES_URL")
-    qdrant_url: str = Field(default="http://localhost:6333", env="QDRANT_URL")
+    redis_url: str = Field(default="redis://localhost:6379", alias="REDIS_URL")
+    postgres_url: str = Field(default="postgresql://localhost:5432/vlinders", alias="POSTGRES_URL")
+    qdrant_url: str = Field(default="http://localhost:6333", alias="QDRANT_URL")
 
     # GPU 配置
-    cuda_visible_devices: Optional[str] = Field(default=None, env="CUDA_VISIBLE_DEVICES")
+    cuda_visible_devices: Optional[str] = Field(default=None, alias="CUDA_VISIBLE_DEVICES")
 
     # 日志配置
-    log_level: str = Field(default="INFO", env="LOG_LEVEL")
-
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    log_level: str = Field(default="INFO", alias="LOG_LEVEL")
 
 
 class Config:
