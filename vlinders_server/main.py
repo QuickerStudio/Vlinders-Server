@@ -7,6 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .config import config
 from .utils import logger
+from .database import db
+from .cache import cache
 from .api.health import router as health_router
 
 # 注意: vLLM 推理服务需要在安装完依赖后启用
@@ -20,6 +22,19 @@ async def lifespan(app: FastAPI):
 
     # 启动时
     logger.info("Starting Vlinders-Server...")
+
+    # 连接数据库和缓存
+    try:
+        await cache.connect()
+        logger.info("Cache service connected")
+    except Exception as e:
+        logger.warning(f"Failed to connect to cache: {e}")
+
+    try:
+        await db.connect()
+        logger.info("Database connected")
+    except Exception as e:
+        logger.warning(f"Failed to connect to database: {e}")
 
     # 加载模型配置
     config.load_models_config()
@@ -37,6 +52,10 @@ async def lifespan(app: FastAPI):
 
     # 关闭时
     logger.info("Shutting down Vlinders-Server...")
+
+    # 断开数据库和缓存连接
+    await cache.disconnect()
+    await db.disconnect()
 
 
 # 创建 FastAPI 应用
