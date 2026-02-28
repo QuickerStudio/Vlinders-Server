@@ -1,0 +1,18 @@
+models:
+  - name: minimax-m2.5
+    path: ./models/MiniMax-M2.5
+    tensor_parallel_size: 1
+    max_model_len: 16384
+    gpu_memory_utilization: 0.9
+    dtype: float16
+    enable_prefix_caching: true
+    trust_remote_code: true
+    enabled: true
+
+  # 示例：添加更多模型
+  # - name: llama-3-8b
+  #   path: /models/llama-3-8b
+  #   tensor_parallel_size: 1
+  #   max_model_len: 32768
+  #   gpu_memory_utilization: 0.85
+  #   enabled: true
